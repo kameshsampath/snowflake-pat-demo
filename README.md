@@ -40,18 +40,29 @@ export MY_PAT_DEMO_ROLE="your_role"
    ```bash
    export SNOWFLAKE_PASSWORD=$(snow sql --query "ALTER USER IF EXISTS $SNOWFLAKE_USER ADD PAT my_demo_pat ROLE_RESTRICTION = $MY_PAT_DEMO_ROLE" --format=json | jq -r '.[] | .token_secret')
    ```
-
-4. **Verify PAT**
+  
+4. **Extract Connection Details**
    ```bash
-   snow connection test --format=json
+    snow connection test --format=json > "$PWD/connection.json"
+    export SNOWFLAKE_ACCOUNT=$(jq -r '.Account' "$PWD/connection.json")
+    export SNOWFLAKE_USER=$(jq -r '.User' "$PWD/connection.json")
+    export SNOWFLAKE_HOST=$(jq -r '.Host' "$PWD/connection.json")
    ```
 
+5. **Verify Connection with PAT**
+   ```bash
+   snow sql --temporary-connection --account="${SNOWFLAKE_ACCOUNT}" \
+  --host="${SNOWFLAKE_HOST}" \
+  --user="${SNOWFLAKE_USER}" \
+  --query "select current_user(), current_role(), current_database(), current_schema()"
+   ```
+  
 ## GitHub Actions Integration
 
 Fork and clone repository to your local machine. 
 
 ```bash
-gh repo fork --clone https://github.com/kameshsama/snowflake-pat-demo.git
+gh repo fork --clone https://github.com/kameshsampath/snowflake-pat-demo.git
 cd snowflake-pat-demo
 ```
 
@@ -61,7 +72,7 @@ Then, set up the GitHub secrets for your repository:
 gh secret set SNOWFLAKE_PASSWORD --body "$SNOWFLAKE_PASSWORD"
 gh secret set SNOWFLAKE_ACCOUNT --body "$SNOWFLAKE_ACCOUNT"
 gh secret set SNOWFLAKE_USER --body "$SNOWFLAKE_USER"
-gh secret set SNOWFLAKE_USER --body "$SNOWFLAKE_USER"
+gh secret set SNOWFLAKE_HOST --body "$SNOWFLAKE_HOST"
 ```
 
 Now just do a empty commit and push to trigger the GitHub Actions workflow.

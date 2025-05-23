@@ -8,3 +8,10 @@ drop network policy if exists ALLOW_ALL_PAT_NETWORK_POLICY;
 use role $MY_PAT_DEMO_ROLE;
 drop database if exists my_demo_db;
 EOF
+
+gh secret delete SNOWFLAKE_PASSWORD
+gh secret delete SNOWFLAKE_ACCOUNT
+gh secret delete SNOWFLAKE_USER
+gh secret delete SNOWFLAKE_HOST
+
+rm -rf "$PWD/connection.json"

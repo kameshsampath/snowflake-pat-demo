@@ -1,0 +1,37 @@
+name: PAT Demo Workflow
+# This workflow demonstrates how to use PATs with the Snowflake CLI Action to manage Snowflake resources.
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  SNOWFLAKE_HOST: ${{ secrets.SNOWFLAKE_HOST }}
+  SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+  SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Snowflake CLI
+        uses: snowflakedb/snowflake-cli-action@v1.5
+
+      - name: Verify Snowflake connection
+        run: |
+          snow sql --temporary-connection \
+            --query "select current_user(), current_role(), current_database(), current_schema()"
+
+      - name: List all PATs for the current user
+        run: |
+          snow sql --temporary-connection \
+            --query "show pats for user ${{ secrets.SNOWFLAKE_USER }}"
