@@ -46,6 +46,33 @@ export MY_PAT_DEMO_ROLE="your_role"
    snow connection test --format=json
    ```
 
+## GitHub Actions Integration
+
+Fork and clone repository to your local machine. 
+
+```bash
+gh repo fork --clone https://github.com/kameshsama/snowflake-pat-demo.git
+cd snowflake-pat-demo
+```
+
+Then, set up the GitHub secrets for your repository:
+
+```bash
+gh secret set SNOWFLAKE_PASSWORD --body "$SNOWFLAKE_PASSWORD"
+gh secret set SNOWFLAKE_ACCOUNT --body "$SNOWFLAKE_ACCOUNT"
+gh secret set SNOWFLAKE_USER --body "$SNOWFLAKE_USER"
+gh secret set SNOWFLAKE_USER --body "$SNOWFLAKE_USER"
+```
+
+Now just do a empty commit and push to trigger the GitHub Actions workflow.
+
+```bash
+git commit --allow-empty -m "Trigger GitHub Actions"
+git push
+```
+
+This will run the workflow defined in `.github/workflows/snowflake-pat-demo.yml`, which will use the PAT to connect to Snowflake and perform operations.
+
 ## Cleanup
 
 To remove all created resources:
@@ -61,6 +88,7 @@ To remove all created resources:
 - `cleanup.sh`: Removes all created resources
 - `connection.json`: Connection details
 - `cleanup.sql`: SQL cleanup statements
+- `.github/workflows/snowflake-pat-demo.yml`: GitHub Actions workflow file
 
 ## Security Notes
 
