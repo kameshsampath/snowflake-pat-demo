@@ -4,7 +4,7 @@ use role accountadmin;
 alter user ${SNOWFLAKE_USER} unset network_policy;
 alter user ${SNOWFLAKE_USER} remove pat my_demo_pat;
 
-drop network policy if exists ALLOW_ALL_PAT_NETWORK_POLICY;
+drop network policy if exists GH_ACTIONS_PAT_NETWORK_POLICY;
 use role $MY_PAT_DEMO_ROLE;
 drop database if exists my_demo_db;
 EOF
